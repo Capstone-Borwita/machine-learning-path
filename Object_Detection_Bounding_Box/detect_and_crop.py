@@ -31,14 +31,14 @@ def detect_and_crop(image_path, output_folder, confidence_threshold=0.5, save_cr
         cropped = img[y1:y2, x1:x2]
         cropped_images.append(cropped)
 
-        # Save cropped regions (optional)
+        # Save cropped regions
         if save_crops:
             output_path = f"{output_folder}/crop_{i}.jpg"
             cv2.imwrite(output_path, cropped)
             print(f"Saved: {output_path}")
     return cropped_images
 
-# Example usage
+# usage
 if __name__ == "__main__":
     input_image = "Object_Detection_Bounding_Box/inputs-ktp/test-ktp.jpg"  # Example input image
     output_folder = "output-crop"          # Output folder for cropped images
