@@ -11,7 +11,3 @@ This project is a continuation of the machine learning process after carrying ou
 - `detect_and_crop.py`: Python script for detecting and cropping regions.
 - `requirements.txt`: List of Python dependencies.
 
-## How to Run
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
