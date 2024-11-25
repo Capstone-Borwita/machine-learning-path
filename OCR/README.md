@@ -3,7 +3,12 @@
 
 OCR is refer to optical character recognition, the objective of this model is to make text generated based on image contain text. For this model would use CTC on CNN-RNN Based model. How this model work are slightly different for isolation method. Rather than we isolate, we split as much as we decide and then make many probabilities to each splited image
 
+![Sample Image 1](https://raw.githubusercontent.com/Capstone-Borwita/machine-learning-path/main/OCR/Images/Ctc.png)
+
+upper is isolation method, below is ctc method
+
 We used research paper from Baoguang Shi, et al. in 2015 (https://arxiv.org/pdf/1507.05717) as benchmark for our architectur model.  
+![Sample Image 2](https://raw.githubusercontent.com/Capstone-Borwita/machine-learning-path/main/OCR/Images/Structure.png)
 
 
 
