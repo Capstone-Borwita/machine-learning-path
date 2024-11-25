@@ -6,7 +6,7 @@ This project is a continuation of the machine learning process after carrying ou
 ## Folder Structure
 - `inputs-ktp/`: Folder for input KTP images.
 - `output-crop/`: Folder where cropped images will be saved.
-- `Train result/`: Folder containing YOLOv8 model weights (`Model_Detection_Label.pt`) and training results.
+- `Train result/`: Folder containing YOLOv8 model weights and training results.
 - `crop_bounding_box.ipynb and detection-crop ktp.ipynb` : Jupyter notebook for local testing and execution.
 - `detect_and_crop.py`: Python script for detecting and cropping regions.
 - `requirements.txt`: List of Python dependencies.
