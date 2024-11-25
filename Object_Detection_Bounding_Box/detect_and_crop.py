@@ -3,7 +3,7 @@ import cv2
 import os
 
 # Initialize YOLO model
-model = YOLO("D:/Bangkit Capstone/Object-Detection-Bounding-Box/Object_Detection_Bounding_Box/Train result/train/weights/Model_Detection_Label.pt")  # Ensure relative path
+model = YOLO("D:/Bangkit Capstone/Object-Detection-Bounding-Box/Object_Detection_Bounding_Box/Model_Detection_Label.pt")  # Ensure relative path
 
 # Detect objects and crop regions
 def detect_and_crop(image_path, output_folder, confidence_threshold=0.5, save_crops=False):
