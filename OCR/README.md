@@ -38,6 +38,8 @@ Install dependencies
 ## Additional information
 we build our model in jupyter notebook enviroment, but also we sure can used .py extension to only used the model without training procces. This OCR model *strictly* used only cropped image contain with text, so its better used this model align with our bounding box algorithm
 
+For dataset used can find here : `https://drive.google.com/drive/folders/1wNUmcfQEdFAmkezwBJt5GLAr9wiKiwrw?usp=drive_link`
+
 `Train.ipynb` : Contain how to make OCR model, this notebook can used for two model based on their font. The different only on the dataset used
 
 `test.ipynb` : to test and compare our model with existing model.
