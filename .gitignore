@@ -1,0 +1,23 @@
+.vscode
+*.pyc
+__pycache__
+env3.7
+env3.6
+env
+dist
+.mypy_cache
+.idea
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environments
+.env
+.env.production
+.env.development
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/

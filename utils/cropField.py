@@ -1,12 +1,16 @@
 from ultralytics import YOLO
 import cv2
 import os
+from pathlib import Path
 
 # Initialize YOLO model
-model = YOLO(r"models\Model_Detection_Label.pt")  # Ensure relative path
+model = YOLO(Path(__file__).parent.parent / "models/Model_Detection_Label.pt")
+
 
 # Detect objects and crop regions
-def detect_and_crop(image_path, output_folder, confidence_threshold=0.5, save_crops=False):
+def detect_and_crop(
+    image_path, output_folder, confidence_threshold=0.5, save_crops=False
+):
     # Check if output folder exists, create if not
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
@@ -18,7 +22,7 @@ def detect_and_crop(image_path, output_folder, confidence_threshold=0.5, save_cr
 
     # Run YOLO inference
     results = model(img)
-    boxes = results[0].boxes  
+    boxes = results[0].boxes
     class_names = results[0].names
 
     cropped_images = {}
@@ -33,14 +37,10 @@ def detect_and_crop(image_path, output_folder, confidence_threshold=0.5, save_cr
         class_id = int(box.cls.item())
         class_name = class_names[class_id]
 
-
         # Save cropped regions
         if save_crops:
             output_path = f"{output_folder}/crop_{i}.jpg"
             cropped_images[class_name] = output_path
             cv2.imwrite(output_path, cropped)
-            print(f"Saved: {output_path}")
-            
+
     return cropped_images
-
-
