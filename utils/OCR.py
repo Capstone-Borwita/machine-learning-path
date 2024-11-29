@@ -3,6 +3,7 @@ import cv2
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
+import regex as re
 
 # Define alphabets with uppercase English letters (A-Z), digits (0-9), and special characters
 alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789*^_)(- .',"
@@ -61,6 +62,9 @@ root = Path(__file__).parent.parent
 modelNIK = tf.keras.models.load_model(root / "models/ctc_crnn_nik.h5")
 model = tf.keras.models.load_model(root / "models/ar_ver2.h5")
 
+def is_valid_nik(nik):
+    nik_pattern = r"^\d{6}(?:0[1-9]|[1-2][0-9]|3[0-1])(?:0[1-9]|1[0-2])\d{5}[1-9]$"
+    return bool(re.match(nik_pattern, nik))
 
 def extractText(croppedImage):
     extractedText = {}
@@ -84,7 +88,14 @@ def extractText(croppedImage):
 
         # Convert the predicted labels back to text
         prediction = num_to_label(decoded[0])
+
+        # NIK validation
+        if cropped == "NIK" and is_valid_nik(prediction):
+            return f"{prediction} is Invalid NIK"
+        
+        # Add extracted text into a dictionary
         extractedText[cropped] = prediction
+
 
         # Plot the image and display the predicted label
         plt.imshow(
@@ -93,5 +104,5 @@ def extractText(croppedImage):
         plt.title(f"Predicted Label: {prediction}")
         plt.show()
 
-        # Print the prediction
+
     return extractedText
