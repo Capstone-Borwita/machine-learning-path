@@ -89,9 +89,9 @@ def extractText(croppedImage):
         # Convert the predicted labels back to text
         prediction = num_to_label(decoded[0])
 
-        # NIK validation (Uncomment when needed)
-        # if cropped == "NIK" and not is_valid_nik(prediction):
-        #     return f"{prediction} is Invalid NIK"
+        # NIK validation
+        if cropped == "NIK" and not is_valid_nik(prediction):
+            return f"{prediction} is Invalid NIK"
         
         # Add extracted text into a dictionary
         extractedText[cropped] = prediction
