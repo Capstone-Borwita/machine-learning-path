@@ -44,10 +44,17 @@ def detect_and_crop(
             cv2.imwrite(output_path, cropped)
 
     if len(cropped_images) != 3:
-        return f"{', '.join(cropped_class for cropped_class in ['NIK', 'Nama', 'Alamat'] if cropped_class not in cropped_images)} Not Found in KTP"
-    
-    return cropped_images
+        classes = " dan".join(
+            ", ".join(
+                cropped_class
+                for cropped_class in ["NIK", "Nama", "Alamat"]
+                if cropped_class not in cropped_images
+            ).rsplit(",", 1)
+        )
 
+        return f"{classes} tidak dapat dibaca"
+
+    return cropped_images
 
     # if missing_classes:                           if want consistent return type
     #     return {

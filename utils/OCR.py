@@ -62,13 +62,14 @@ root = Path(__file__).parent.parent
 modelNIK = tf.keras.models.load_model(root / "models/ctc_crnn_nik.h5")
 model = tf.keras.models.load_model(root / "models/ar_ver2.h5")
 
+
 def is_valid_nik(nik):
     nik_pattern = r"^\d{6}(?:0[1-9]|[1-2][0-9]|3[0-1])(?:0[1-9]|1[0-2])\d{5}[1-9]$"
     return bool(re.match(nik_pattern, nik))
 
+
 def extractText(croppedImage):
     extractedText = {}
-    invalid_msg = None
     # Load and preprocess the image
     for cropped in croppedImage:
         image_path = croppedImage[cropped]  # Update with your image path
@@ -88,20 +89,10 @@ def extractText(croppedImage):
         )
 
         # Convert the predicted labels back to text
-        prediction = num_to_label(decoded[0])
+        prediction = num_to_label(decoded[0]).strip()
 
-        # KTP Validation
-        if prediction == "":
-            invalid_msg = f"{cropped} is Not Detected"
-            break
-        elif cropped == "NIK" and not is_valid_nik(prediction):
-            invalid_msg =  f"{prediction} is Invalid NIK"
-            break
-        
-        
         # Add extracted text into a dictionary
         extractedText[cropped] = prediction
-
 
         # Plot the image and display the predicted label
         plt.imshow(
@@ -109,9 +100,16 @@ def extractText(croppedImage):
         )
         plt.title(f"Predicted Label: {prediction}")
         plt.show()
-    
-    # return string of error
-    if invalid_msg is not None:
-        return invalid_msg
+
+    emptyTexts = [key for key, value in extractedText.items() if value == ""]
+    if len(emptyTexts) > 0:
+        classes = " dan".join(", ".join(emptyTexts).rsplit(",", 1))
+
+        return f"{classes} tidak terbaca"
+
+    if len(extractedText["NIK"]) < 16:
+        return "NIK terpotong"
+    elif not is_valid_nik(extractedText["NIK"]):
+        return f"{extractedText["NIK"]} tidak sesuai dengan format NIK"
 
     return extractedText
