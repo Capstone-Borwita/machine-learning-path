@@ -68,6 +68,7 @@ def is_valid_nik(nik):
 
 def extractText(croppedImage):
     extractedText = {}
+    invalid_msg = None
     # Load and preprocess the image
     for cropped in croppedImage:
         image_path = croppedImage[cropped]  # Update with your image path
@@ -89,9 +90,14 @@ def extractText(croppedImage):
         # Convert the predicted labels back to text
         prediction = num_to_label(decoded[0])
 
-        # NIK validation
-        if cropped == "NIK" and not is_valid_nik(prediction):
-            return f"{prediction} is Invalid NIK"
+        # KTP Validation
+        if prediction == "":
+            invalid_msg = f"{cropped} is Not Detected"
+            break
+        elif cropped == "NIK" and not is_valid_nik(prediction):
+            invalid_msg =  f"{prediction} is Invalid NIK"
+            break
+        
         
         # Add extracted text into a dictionary
         extractedText[cropped] = prediction
@@ -103,6 +109,9 @@ def extractText(croppedImage):
         )
         plt.title(f"Predicted Label: {prediction}")
         plt.show()
-
+    
+    # return string of error
+    if invalid_msg is not None:
+        return invalid_msg
 
     return extractedText
