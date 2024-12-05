@@ -110,6 +110,6 @@ def extractText(croppedImage):
     if len(extractedText["NIK"]) < 16:
         return "NIK terpotong"
     elif not is_valid_nik(extractedText["NIK"]):
-        return f"{extractedText["NIK"]} tidak sesuai dengan format NIK"
+        return f"{extractedText['NIK']} tidak sesuai dengan format NIK"
 
     return extractedText
