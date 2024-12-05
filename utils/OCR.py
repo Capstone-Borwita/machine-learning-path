@@ -64,7 +64,7 @@ model = tf.keras.models.load_model(root / "models/ar_ver2.h5")
 
 
 def is_valid_nik(nik):
-    nik_pattern = r"^\d{6}(?:0[1-9]|[1-2][0-9]|3[0-1])(?:0[1-9]|1[0-2])\d{5}[1-9]$"
+    nik_pattern = r"^\d{6}(?:(?:0[1-9]|[1-2][0-9]|3[0-1])|(?:[4-6][0-9]|7[0-1]))(?:0[1-9]|1[0-2])\d{5}[1-9]$"
     return bool(re.match(nik_pattern, nik))
 
 
