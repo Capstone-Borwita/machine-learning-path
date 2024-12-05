@@ -12,6 +12,7 @@ def process_single_ktp_image(input_image_path):
         height = int((image.shape[0] / image.shape[1]) * width)
         return cv2.resize(image, (width, height)), (width, height)
 
+    # Check if KTP is a rectangle
     def is_valid_rectangle(points, tolerance=10):
         if points is None or len(points) != 4:
             return False
@@ -23,8 +24,8 @@ def process_single_ktp_image(input_image_path):
             and abs(diagonals[0] - diagonals[1]) < tolerance
         )
 
+    # Check if masked KTP has 4 points
     def find_four_points(mask):
-        """Find four points for perspective transformation."""
         gray = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (5, 5), 0)
         edges = cv2.Canny(blurred, 50, 150)
@@ -38,6 +39,22 @@ def process_single_ktp_image(input_image_path):
                 return approx.squeeze()
         return None
 
+    # Check if KTP is whole
+    def is_whole_ktp(mask):
+        # Threshold the mask
+        mask_binary = cv2.threshold(mask, 127, 255, cv2.THRESH_BINARY)[1]
+        mask_binary = cv2.cvtColor(mask_binary, cv2.COLOR_BGR2GRAY) if len(mask_binary.shape) == 3 else mask_binary
+
+        # Check if any pixel of the thresholded mask touch any border
+        top_row = mask_binary[0, :]
+        bottom_row = mask_binary[-1, :]
+        left_col = mask_binary[:, 0]
+        right_col = mask_binary[:, -1]
+
+        # if somehow any of those column or row contain any white pixel (from the threshold), then it means the mask touched the border
+        return not any([np.any(top_row),np.any(bottom_row),np.any(left_col),np.any(right_col)])
+
+    # Wrap or Crop the KTP based on it's four points or bounding box
     def wrap_ktp(mask, original_image):
         mask_resized, size = resizer(mask)
         original_resized, _ = resizer(original_image)
@@ -72,8 +89,11 @@ def process_single_ktp_image(input_image_path):
     for result in results:
         if result.masks is not None and len(result.masks.data) > 0:
             mask = (result.masks.data[0].cpu().numpy() > 0).astype(np.uint8) * 255
-            return wrap_ktp(mask, image_colored)
 
-    print(f"No KTP detected in the image: {input_image_path}")
-    return None # return None since no KTP detected
+            # Check if the KTP is whole
+            if not is_whole_ktp(mask):
+                print("KTP is not Whole")
+                return "KTP terdeteksi tidak lengkap. Pastikan seluruh bagian KTP terlihat dalam gambar."
+
+            return wrap_ktp(mask, image_colored)
 
