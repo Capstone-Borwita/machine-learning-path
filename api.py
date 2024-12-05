@@ -28,7 +28,7 @@ def ktp_ocr(
         # Step 2: Perform segmentation crop
         segmented_image = process_single_ktp_image(input_image_path)
 
-        if segmented_image is None:
+        if type(segmented_image) is str:
             print("[ERROR] Segmentation failed. Exiting.")
             return
 

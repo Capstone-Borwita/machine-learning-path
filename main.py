@@ -7,7 +7,7 @@ from utils.orientation import detect_field_in_rotated_image
 from utils.segmentationCrop import process_single_ktp_image
 
 # Define paths
-INPUT_IMAGE = "testImages\image.png"
+INPUT_IMAGE = r"testImages\testValidCrop\fotokopiKTP2.jpg"
 SEGMENTATION_MODEL_OUTPUT_FOLDER = "output_images/segmentation"
 CROPPED_FIELDS_FOLDER = "output_images/crops"
 
@@ -37,7 +37,7 @@ def main():
         print("-> Segmenting the KTP from the oriented image...")
         segmented_image = process_single_ktp_image(INPUT_IMAGE)
 
-        if segmented_image is None:
+        if type(segmented_image) is str:
             print("[ERROR] Segmentation failed. Exiting.")
             return
 
