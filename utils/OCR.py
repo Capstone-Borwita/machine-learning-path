@@ -60,7 +60,7 @@ def preprocess_image(image_path, target_height=48, target_width=400):
 # Load the model
 root = Path(__file__).parent.parent
 modelNIK = tf.keras.models.load_model(root / "models/ctc_crnn_nik.h5")
-model = tf.keras.models.load_model(root / "models/ar_ver2.h5")
+model = tf.keras.models.load_model(root / "models/ar_ver4.h5")
 
 
 def is_valid_nik(nik):
