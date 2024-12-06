@@ -11,7 +11,9 @@ loss of arial model train
 
 loss of NIK model train
 
-Result of Batch Test
+
+
+##Result of Batch Test
 ![Sample Image 3](https://raw.githubusercontent.com/Capstone-Borwita/machine-learning-path/main/batch-test/images/Arial_Model.png)
 ![Sample Image 4](https://raw.githubusercontent.com/Capstone-Borwita/machine-learning-path/main/batch-test/images/NIK_Model.png)
 
