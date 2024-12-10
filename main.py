@@ -5,10 +5,10 @@ from utils.cropField import detect_and_crop
 from utils.OCR import extractText
 # from utils.orientation import detect_field_in_rotated_image
 from utils.segmentationCrop import process_single_ktp_image
-# from utils.classification import classify_ktp
+from utils.classification import classify_ktp
 
 # Define paths
-INPUT_IMAGE = r"testImages\testValidCrop\halfKTP.png"
+INPUT_IMAGE = r"testImages\testValidCrop\fotokopiKTP.jpg"
 SEGMENTATION_MODEL_OUTPUT_FOLDER = "output_images/segmentation"
 CROPPED_FIELDS_FOLDER = "output_images/crops"
 
@@ -34,15 +34,15 @@ def main():
         # print(f"[INFO] Oriented image saved to {oriented_image_path}\n")
 
         # Step 1: Classify KTP
-        # print("[STEP 1] KTP Classification")
-        # print("-> Checking if the image is a valid KTP...")
-        # classification_result = classify_ktp(INPUT_IMAGE)
+        print("[STEP 1] KTP Classification")
+        print("-> Checking if the image is a valid KTP...")
+        classification_result = classify_ktp(INPUT_IMAGE)
 
-        # if type(classification_result) is str:
-        #     print(f"[INFO] The input image is classified as 'Not KTP' with confidence {classification_result[-1]:.2f}. Exiting.")
-        #     return
+        if not classification_result[0]:
+            print(f"[INFO] The input image is classified as 'Not KTP' with percentage of {classification_result[-1]:.2f}%. Exiting.")
+            return "Gambar Tidak Memuat KTP, Coba Lagi"
 
-        # print(f"[INFO] The input image is classified as 'KTP' with confidence {classification_result[-1]:.2f}. Proceeding to segmentation...\n")
+        print(f"[INFO] The input image is classified as 'KTP' with percentage of {classification_result[-1]:.2f}%. Proceeding to segmentation...\n")
 
 
         # Step 2: Perform segmentation crop
