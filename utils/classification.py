@@ -1,32 +1,33 @@
 import os
-import cv2
-import numpy as np
 import tensorflow as tf
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+import numpy as np
 from pathlib import Path
 
-IMG_SIZE = (224, 224)
-CLASS_NAMES = ["KTP", "Not KTP"]
 
+# Load the model
 root = Path(__file__).parent.parent
 model_path = root / "models/ktpClassifier.keras"
-model = tf.keras.models.load_model(model_path)
+model = load_model(model_path)
+
+def preprocess_image(image_path, target_size):
+    img = load_img(image_path, target_size=target_size)
+    img_array = img_to_array(img) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
+    return img_array
 
 def classify_ktp(image_path):
     if not os.path.exists(image_path):
         return f"File not found: {image_path}"
 
-    image = cv2.imread(image_path)
-    if image is None:
-        return f"Failed to load image: {image_path}"
+    try:
+        processed_image = preprocess_image(image_path, (224, 224))
+    except Exception as e:
+        return f"Failed to preprocess image: {e}"
 
-    # Normalize
-    image_resized = cv2.resize(image, IMG_SIZE)
-    image_normalized = image_resized / 255.0
-    input_data = np.expand_dims(image_normalized, axis=0).astype(np.float32)
-
-    # Prediction
-    prediction = model.predict(input_data)[0][0]
+    prediction = model.predict(processed_image)[0][0]
     is_ktp = prediction < 0.5
-    confidence = 1 - prediction if is_ktp else prediction
+    confidence_percentage = (1-prediction)*100
 
-    return (image,confidence) if is_ktp else "Foto Tidak Memuat KTP, Coba Lagi"
+    return (is_ktp, confidence_percentage)
