@@ -3,11 +3,12 @@ import cv2
 from tqdm import tqdm
 from utils.cropField import detect_and_crop
 from utils.OCR import extractText
-from utils.orientation import detect_field_in_rotated_image
+# from utils.orientation import detect_field_in_rotated_image
 from utils.segmentationCrop import process_single_ktp_image
+# from utils.classification import classify_ktp
 
 # Define paths
-INPUT_IMAGE = r"testImages\testValidCrop\fotokopiKTP2.jpg"
+INPUT_IMAGE = r"testImages\testValidCrop\halfKTP.png"
 SEGMENTATION_MODEL_OUTPUT_FOLDER = "output_images/segmentation"
 CROPPED_FIELDS_FOLDER = "output_images/crops"
 
@@ -32,10 +33,22 @@ def main():
         # cv2.imwrite(oriented_image_path, oriented_image)
         # print(f"[INFO] Oriented image saved to {oriented_image_path}\n")
 
+        # Step 1: Classify KTP
+        # print("[STEP 1] KTP Classification")
+        # print("-> Checking if the image is a valid KTP...")
+        # classification_result = classify_ktp(INPUT_IMAGE)
+
+        # if type(classification_result) is str:
+        #     print(f"[INFO] The input image is classified as 'Not KTP' with confidence {classification_result[-1]:.2f}. Exiting.")
+        #     return
+
+        # print(f"[INFO] The input image is classified as 'KTP' with confidence {classification_result[-1]:.2f}. Proceeding to segmentation...\n")
+
+
         # Step 2: Perform segmentation crop
         print("[STEP 2] Segmentation")
         print("-> Segmenting the KTP from the oriented image...")
-        segmented_image = process_single_ktp_image(INPUT_IMAGE)
+        segmented_image = process_single_ktp_image(INPUT_IMAGE) # Ganti ke classification_result[0] jika jadi menggunakan klasifikasi dan ubah sedikit util segmentasi
 
         if type(segmented_image) is str:
             print("[ERROR] Segmentation failed. Exiting.")
