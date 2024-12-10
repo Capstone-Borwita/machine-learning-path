@@ -83,7 +83,7 @@ def process_single_ktp_image(input_image_path):
             return original_image
 
     # Load and process the image
-    image_colored = cv2.imread(input_image_path)
+    image = cv2.imread(input_image_path)
     results = model.predict(source=input_image_path, save=False, conf=0.5)
 
     for result in results:
@@ -95,5 +95,5 @@ def process_single_ktp_image(input_image_path):
                 print("KTP is not Whole")
                 return "KTP terdeteksi tidak lengkap. Pastikan seluruh bagian KTP terlihat dalam gambar."
 
-            return wrap_ktp(mask, image_colored)
+            return wrap_ktp(mask, image)
 
