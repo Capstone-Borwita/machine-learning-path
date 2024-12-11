@@ -5,7 +5,9 @@ from pathlib import Path
 
 
 # Load the model
-model = load_model(Path(__file__).parent.parent / "models/ktpClassifier.keras")
+model = load_model(
+    Path(__file__).parent.parent / "models/ktpClassifier.keras", compile=False
+)
 
 
 def preprocess_image(image_path, target_size):
