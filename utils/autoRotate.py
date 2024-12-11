@@ -20,17 +20,14 @@ def compare_white_pixels(image):
     return right_white_pixels > left_white_pixels
 
 
-def rotate_if_necessary(image_path):
+def rotate_if_necessary(image):
     """
     Resets an image that has been rotated 90°/180°/270°.
     If the image is in landscape but left has more white pixels, rotates 180°.
 
     Parameters:
-        image_path : str
+        image : MatLike
     """
-    # Read the image
-    image = cv2.imread(image_path)
-
     # If the image is in landscape
     if image.shape[1] >= image.shape[0]:
         # Convert image to grayscale

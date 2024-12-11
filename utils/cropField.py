@@ -1,6 +1,5 @@
 from ultralytics import YOLO
 import cv2
-import os
 from pathlib import Path
 
 # Initialize YOLO model
@@ -8,18 +7,7 @@ model = YOLO(Path(__file__).parent.parent / "models/Model_Detection_Label.pt")
 
 
 # Detect objects and crop regions
-def detect_and_crop(
-    image_path, output_folder, confidence_threshold=0.5, save_crops=False
-):
-    # Check if output folder exists, create if not
-    if not os.path.exists(output_folder):
-        os.makedirs(output_folder)
-
-    img = cv2.imread(image_path)
-    if img is None:
-        print(f"Error: Unable to read image {image_path}")
-        return []
-
+def detect_and_crop(img, confidence_threshold=0.5):
     # Run YOLO inference
     results = model(img)
     boxes = results[0].boxes
@@ -37,11 +25,7 @@ def detect_and_crop(
         class_id = int(box.cls.item())
         class_name = class_names[class_id]
 
-        # Save cropped regions
-        if save_crops:
-            output_path = f"{output_folder}/crop_{i}.jpg"
-            cropped_images[class_name] = output_path
-            cv2.imwrite(output_path, cropped)
+        cropped_images[class_name] = cropped
 
     if len(cropped_images) != 3:
         classes = " dan".join(
@@ -52,18 +36,6 @@ def detect_and_crop(
             ).rsplit(",", 1)
         )
 
-        return f"{classes} tidak dapat dibaca"
+        return (None, f"{classes} tidak dapat dibaca")
 
-    return cropped_images
-
-    # if missing_classes:                           if want consistent return type
-    #     return {
-    #         "status": "incomplete",
-    #         "missing_classes": missing_classes,
-    #         "cropped_images": cropped_images,
-    #     }
-
-    # return {
-    #     "status": "complete",
-    #     "cropped_images": cropped_images,
-    # }
+    return (cropped_images, None)

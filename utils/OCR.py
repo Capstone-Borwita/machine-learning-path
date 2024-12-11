@@ -35,11 +35,9 @@ def num_to_label(num):
 
 
 # Function to load, resize, rotate and preprocess the image
-def preprocess_image(image_path, target_height=48, target_width=400):
-    # Load the image using OpenCV
-    img = cv2.imread(
-        image_path, cv2.IMREAD_GRAYSCALE
-    )  # Read as grayscale (single channel)
+def preprocess_image(img, target_height=48, target_width=400):
+    # Convert image to grayscale (single channel)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Resize the image to the target dimensions (400x48)
     img_resized = cv2.resize(img, (target_width, target_height))
