@@ -2,8 +2,10 @@ import os
 import cv2
 from .utils.cropField import detect_and_crop
 from .utils.OCR import extractText
-from .utils.orientation import detect_field_in_rotated_image
+
+# from .utils.orientation import detect_field_in_rotated_image
 from .utils.segmentationCrop import process_single_ktp_image
+from .utils.classification import classify_ktp
 
 
 def ktp_ocr(
@@ -12,18 +14,11 @@ def ktp_ocr(
     cropped_fields_folder: str,
 ):
     try:
-        # Step 1: Perform orientation correction
-        # print("[STEP 1] Orientation Detection and Correction")
-        # print("-> Detecting fields and correcting orientation...")
-        # oriented_image = detect_field_in_rotated_image(input_image_path)
+        # Step 1: Classify KTP
+        classification_result = classify_ktp(input_image_path)
 
-        # if oriented_image is None:
-        #     print("[ERROR] Orientation correction failed. Exiting.")
-        #     return
-
-        # oriented_image_path = os.path.join(segmentation_model_output_folder, "oriented_image.jpg")
-        # cv2.imwrite(oriented_image_path, oriented_image)
-        # print(f"[INFO] Oriented image saved to {oriented_image_path}\n")
+        if not classification_result[0]:
+            return "KTP tidak terdeteksi, harap coba lagi"
 
         # Step 2: Perform segmentation crop
         segmented_image = process_single_ktp_image(input_image_path)
@@ -47,9 +42,6 @@ def ktp_ocr(
 
         # Step 4: Perform OCR on each cropped field
         if cropped_images:
-            # for idx, cropped_image in tqdm(enumerate(cropped_images), total=len(cropped_images), desc="OCR Progress"):
-            #     cropped_image_path = os.path.join(cropped_fields_folder, f"crop_{idx}.jpg")
-
             try:
                 return extractText(cropped_images)
             except Exception as e:
