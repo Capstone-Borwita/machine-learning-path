@@ -2,8 +2,7 @@ import os
 import cv2
 from .utils.cropField import detect_and_crop
 from .utils.OCR import extractText
-
-# from .utils.orientation import detect_field_in_rotated_image
+from .utils.autoRotate import rotate_if_necessary
 from .utils.segmentationCrop import process_single_ktp_image
 from .utils.classification import classify_ktp
 
@@ -11,6 +10,7 @@ from .utils.classification import classify_ktp
 def ktp_ocr(
     input_image_path: str,
     segmentation_model_output_folder: str,
+    rotate_model_output_folder: str,
     cropped_fields_folder: str,
 ):
     try:
@@ -32,15 +32,23 @@ def ktp_ocr(
         )
         cv2.imwrite(segmented_image_path, segmented_image)
 
-        # Step 3: Detect and crop fields
+        # Step 3: Adjust image rotation
+        rotated_image = rotate_if_necessary(segmented_image_path)
+
+        rotated_image_path = os.path.join(
+            rotate_model_output_folder, "rotated_image.jpg"
+        )
+        cv2.imwrite(rotated_image_path, rotated_image)
+
+        # Step 4: Detect and crop fields
         cropped_images = detect_and_crop(
-            segmented_image_path,
+            rotated_image_path,
             cropped_fields_folder,
             confidence_threshold=0.5,
             save_crops=True,
         )
 
-        # Step 4: Perform OCR on each cropped field
+        # Step 5: Perform OCR on each cropped field
         if cropped_images:
             try:
                 return extractText(cropped_images)
