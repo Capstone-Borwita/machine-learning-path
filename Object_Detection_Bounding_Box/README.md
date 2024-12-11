@@ -1,7 +1,7 @@
 # KTP Detection and Cropping 
 
 ## Overview
-This project is a continuation of the machine learning process after carrying out the process of detecting KTP and non-KTP as well as the Position Adjustment process. The project contains the YOLOv8 model for labelling for box information(NIK,NAMA,and Alamat) and code to detect and crop regions from KTP images. The cropped regions can be used for further Model OCR processing. 
+This project is a continuation of the machine learning process after carrying out the process of detecting KTP and non-KTP as well as the Segmentation and crop procces. The project contains the YOLOv8 model for labelling for box information(NIK,NAMA,and Alamat) and code to detect and crop regions from KTP images. The cropped regions can be used for further Model OCR processing. 
 
 ## Examples
 ### Detection and Cropping Results
