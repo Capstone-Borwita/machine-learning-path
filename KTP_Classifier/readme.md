@@ -5,15 +5,6 @@ This repository contains the code for training and testing a binary image classi
 
 ---
 
-## Table of Contents
-
-- [Features](#features)
-- [Training the Model](#training-the-model)
-- [Testing the Model](#testing-the-model)
-- [Usage](#Usage)
-
----
-
 ## Features
 
 - **Data Augmentation**: Real-time transformations including rotation, zoom, and brightness adjustments to improve model robustness.
