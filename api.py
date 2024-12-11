@@ -24,8 +24,7 @@ def ktp_ocr(
         segmented_image = process_single_ktp_image(input_image_path)
 
         if type(segmented_image) is str:
-            print("[ERROR] Segmentation failed. Exiting.")
-            return
+            return segmented_image
 
         segmented_image_path = os.path.join(
             segmentation_model_output_folder, "segmented_image.jpg"
