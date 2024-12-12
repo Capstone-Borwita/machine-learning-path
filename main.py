@@ -3,88 +3,91 @@ import cv2
 from tqdm import tqdm
 from utils.cropField import detect_and_crop
 from utils.OCR import extractText
-# from utils.orientation import detect_field_in_rotated_image
+from utils.autoRotate import rotate_if_necessary
 from utils.segmentationCrop import process_single_ktp_image
 from utils.classification import classify_ktp
 
 # Define paths
-INPUT_IMAGE = r"testImages\testValidCrop\fotokopiKTP.jpg"
-SEGMENTATION_MODEL_OUTPUT_FOLDER = "output_images/segmentation"
-CROPPED_FIELDS_FOLDER = "output_images/crops"
+INPUT_FOLDER = r"testImages\mainTestImage" 
+SEGMENTATION_MODEL_OUTPUT_FOLDER = r"testImages/output_images/segmentation"
+CROPPED_FIELDS_FOLDER = r"testImages/output_images/crops"
+RESULTS_FILE = r"testImages/output_images/ocr_results.txt"
+
 
 # Ensure output directories exist
 os.makedirs(SEGMENTATION_MODEL_OUTPUT_FOLDER, exist_ok=True)
 os.makedirs(CROPPED_FIELDS_FOLDER, exist_ok=True)
 
+def ktp_ocr(input_image_path: str):
+    status = "Success"
+    try:
+        # Step 1: Classify KTP
+        classification_result = classify_ktp(input_image_path)
+
+        if not classification_result[0]:
+            return "KTP tidak terdeteksi, harap coba lagi", "Failed at classification"
+
+        # Step 2: Perform segmentation crop
+        segmented_image, error_message = process_single_ktp_image(input_image_path)
+        if error_message:
+            return error_message, "Failed at segmentation"
+
+        # Step 3: Adjust image rotation
+        rotated_image = rotate_if_necessary(segmented_image)
+
+        # Step 4: Detect and crop fields
+        cropped_images, error_message = detect_and_crop(rotated_image)
+        if error_message:
+            return error_message, "Failed at field detection"
+
+        # Step 5: Perform OCR on each cropped field
+        if cropped_images:
+            try:
+                ocr_result = extractText(cropped_images)
+                return ocr_result, status
+            except Exception as e:
+                return f"[ERROR] {e}", "Failed at OCR"
+        else:
+            return "No cropped fields to perform OCR on.", "Failed at cropping"
+
+    except Exception as e:
+        return f"[ERROR] An unexpected error occurred: {e}", "Unexpected failure"
+
 def main():
     try:
         print("\n[INFO] Starting KTP processing pipeline...\n")
 
-        # Step 1: Perform orientation correction
-        # print("[STEP 1] Orientation Detection and Correction")
-        # print("-> Detecting fields and correcting orientation...")
-        # oriented_image = detect_field_in_rotated_image(INPUT_IMAGE_PATH)
+        # Create Result FIle
+        with open(RESULTS_FILE, "w") as results_file:
+            results_file.write("OCR Results\n")
+            results_file.write("============\n")
 
-        # if oriented_image is None:
-        #     print("[ERROR] Orientation correction failed. Exiting.")
-        #     return
+        # Process each image in the input folder
+        for image_file in tqdm(os.listdir(INPUT_FOLDER), desc="Processing images"):
+            input_image_path = os.path.join(INPUT_FOLDER, image_file)
 
-        # oriented_image_path = os.path.join(SEGMENTATION_MODEL_OUTPUT_FOLDER, "oriented_image.jpg")
-        # cv2.imwrite(oriented_image_path, oriented_image)
-        # print(f"[INFO] Oriented image saved to {oriented_image_path}\n")
+            if not os.path.isfile(input_image_path):
+                continue
 
-        # Step 1: Classify KTP
-        print("[STEP 1] KTP Classification")
-        print("-> Checking if the image is a valid KTP...")
-        classification_result = classify_ktp(INPUT_IMAGE)
+            print(f"\n[INFO] Processing image: {image_file}\n")
 
-        if not classification_result[0]:
-            print(f"[INFO] The input image is classified as 'Not KTP' with percentage of {classification_result[-1]:.2f}%. Exiting.")
-            return "Gambar Tidak Memuat KTP, Coba Lagi"
+            # Run KTP OCR pipeline
+            ocr_result, status = ktp_ocr(input_image_path)
 
-        print(f"[INFO] The input image is classified as 'KTP' with percentage of {classification_result[-1]:.2f}%. Proceeding to segmentation...\n")
+            # Save results
+            with open(RESULTS_FILE, "a") as results_file:
+                results_file.write(f"Image: {image_file}\n")
+                results_file.write(f"Status: {status}\n")
 
+                if isinstance(ocr_result, dict):
+                    for field, text in ocr_result.items():
+                        results_file.write(f"  {field}: {text}\n")
+                else:
+                    results_file.write(f"  Message: {ocr_result}\n")
 
-        # Step 2: Perform segmentation crop
-        print("[STEP 2] Segmentation")
-        print("-> Segmenting the KTP from the oriented image...")
-        segmented_image = process_single_ktp_image(INPUT_IMAGE) # Ganti ke classification_result[0] jika jadi menggunakan klasifikasi dan ubah sedikit util segmentasi
+                results_file.write("\n")
 
-        if type(segmented_image) is str:
-            print("[ERROR] Segmentation failed. Exiting.")
-            return
-
-        segmented_image_path = os.path.join(SEGMENTATION_MODEL_OUTPUT_FOLDER, "segmented_image.jpg")
-        cv2.imwrite(segmented_image_path, segmented_image)
-        print(f"[INFO] Segmented image saved to {segmented_image_path}\n")
-
-        # Step 3: Detect and crop fields
-        print("[STEP 3] Field Detection and Cropping")
-        print("-> Detecting fields in the segmented image...")
-        cropped_images = detect_and_crop(
-            segmented_image_path, CROPPED_FIELDS_FOLDER, confidence_threshold=0.5, save_crops=True
-        )
-
-        if not cropped_images:
-            print("[WARNING] No fields detected in the image.\n")
-        else:
-            print(f"[INFO] Detected and saved {len(cropped_images)} cropped fields.\n")
-
-        # Step 4: Perform OCR on each cropped field
-        print("[STEP 4] OCR Processing")
-        print("-> Performing OCR on cropped fields...")
-        if cropped_images:
-            # for idx, cropped_image in tqdm(enumerate(cropped_images), total=len(cropped_images), desc="OCR Progress"):
-            #     cropped_image_path = os.path.join(CROPPED_FIELDS_FOLDER, f"crop_{idx}.jpg")
-
-            try:
-                results = extractText(cropped_images)
-                for cls, text in results.items():
-                    print(f"Extracted Text for Field {cls}: {text}")
-            except Exception as e:
-                print(f"[ERROR] {e}")
-        else:
-            print("[INFO] No cropped fields to perform OCR on.\n")
+            print(f"[INFO] Processing completed for {image_file} with status: {status}\n")
 
     except Exception as e:
         print(f"[ERROR] An unexpected error occurred: {e}")
