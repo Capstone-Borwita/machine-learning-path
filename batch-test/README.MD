@@ -9,7 +9,7 @@ The training notebook here `test.ipynb`
 ![Sample Image 1](https://raw.githubusercontent.com/Capstone-Borwita/machine-learning-path/main/batch-test/images/Loss_Arial.png)
 
 
-### Loss of arial model train
+### Loss of NIK model train
 The training notebook here `test_NIK.ipynb`
 
 ![Sample Image 2](https://raw.githubusercontent.com/Capstone-Borwita/machine-learning-path/main/batch-test/images/Loss_NIK.png)
