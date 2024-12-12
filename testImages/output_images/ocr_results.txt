@@ -1,0 +1,40 @@
+OCR Results
+============
+Image: fotokopiKTP.jpg
+Status: Success
+  NIK: 3603021709910001
+  Nama: JHON DA VID ALBER T SIU5
+  Alamat: TMN CIKANDE BLK C 0429
+
+Image: halfKTP.png
+Status: Failed at segmentation
+  Message: KTP terdeteksi tidak lengkap. Pastikan seluruh bagian KTP terlihat dalam gambar.
+
+Image: non_ktp294.png
+Status: Failed at classification
+  Message: KTP tidak terdeteksi, harap coba lagi
+
+Image: rotation_horizontal.jpg
+Status: Success
+  Alamat: BANJAR AUR UTARA
+  NIK: 1213221511920001
+  Nama: KURNIAWAN
+
+Image: rotation_upside_down.jpg
+Status: Success
+  Alamat: BANJAR AUR UTARA
+  NIK: 1213221511920001
+  Nama: KURNIAWAN
+
+Image: rotation_vertical_down.jpg
+Status: Success
+  Alamat: BANJAR AUR UTARA
+  Nama: KURNIAWAN
+  NIK: 1213221511920001
+
+Image: rotation_vertical_up.jpg
+Status: Success
+  NIK: 1213221511920001
+  Alamat: BANJAR AUR UTARA
+  Nama: KURNIAWAN
+
